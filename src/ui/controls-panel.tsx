@@ -56,24 +56,6 @@ export function ControlsPanel({ values, set }: Props) {
             onChange={set.scale}
           />
           <SliderRow
-            label="Size noise scale"
-            value={values.sizeNoiseScale}
-            min={0.0001}
-            max={100}
-            step={0.005}
-            format={fmt3}
-            onChange={set.sizeNoiseScale}
-          />
-          <SliderRow
-            label="Blade height variation"
-            value={values.bladeHeightVariation}
-            min={0}
-            max={0.8}
-            step={0.01}
-            format={fmt2}
-            onChange={set.bladeHeightVariation}
-          />
-          <SliderRow
             label="Wind strength"
             value={values.windStrength}
             min={0}

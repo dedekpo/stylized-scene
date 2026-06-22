@@ -1,7 +1,6 @@
 import { MeshStandardNodeMaterial } from "three/webgpu";
 import {
   abs,
-  attribute,
   cameraViewMatrix,
   clamp,
   color as tslColor,
@@ -45,11 +44,6 @@ export type GrassMaterialParams = {
     colorPatchScale: FloatUniform;
     macroVariation: FloatUniform;
     macroScale: FloatUniform;
-    bladeHeightVariation: FloatUniform;
-    heightPatchVariation: FloatUniform;
-    heightPatchScale: FloatUniform;
-    heightMacroVariation: FloatUniform;
-    heightMacroScale: FloatUniform;
     windStrength: FloatUniform;
     windSpeed: FloatUniform;
     projection: FloatUniform;
@@ -118,52 +112,7 @@ export function buildGrassMaterial({
   );
   const pathSample = tslTexture(textures.pathMask, groundUVFromWorld).r;
 
-  // Blade height variation across three independent scales, mirroring the
-  // color system. Each factor is centred on 1.0 (so average height is
-  // preserved) and they multiply together. Blades root at y=0, so scaling
-  // local Y keeps bases planted.
-
-  // 1. Per-blade (micro): each of the 6 blades carries a distinct bladeId;
-  //    combined with instanceIndex it gets a stable random height, so tips
-  //    break up within a clump instead of looking machine-cropped.
-  const bladeId = attribute<"float">("bladeId", "float");
-  const bladeRand = hash(bladeId.add(float(instanceIndex).mul(16.0)));
-  const perBladeFactor = mix(
-    float(1).sub(uniforms.bladeHeightVariation),
-    float(1).add(uniforms.bladeHeightVariation),
-    bladeRand
-  );
-
-  // 2. Clump (meso): low-frequency noise so neighbouring clumps share a height.
-  const heightPatchNoise = mx_noise_float(
-    worldXZ.add(vec2(311.0, 67.0)).mul(uniforms.heightPatchScale)
-  )
-    .mul(0.5)
-    .add(0.5);
-  const heightPatchFactor = float(1).add(
-    heightPatchNoise.sub(0.5).mul(2).mul(uniforms.heightPatchVariation)
-  );
-
-  // 3. Macro (field-wide): very low frequency for whole tall/short regions.
-  const heightMacroNoise = mx_noise_float(
-    worldXZ.add(vec2(53.0, 17.0)).mul(uniforms.heightMacroScale)
-  )
-    .mul(0.5)
-    .add(0.5);
-  const heightMacroFactor = float(1).add(
-    heightMacroNoise.sub(0.5).mul(2).mul(uniforms.heightMacroVariation)
-  );
-
-  const bladeHeightFactor = perBladeFactor
-    .mul(heightPatchFactor)
-    .mul(heightMacroFactor);
-  const scaledLocal = vec3(
-    positionLocal.x,
-    positionLocal.y.mul(bladeHeightFactor),
-    positionLocal.z
-  );
-
-  m.positionNode = scaledLocal.add(vec3(totalLocalX, 0, 0));
+  m.positionNode = positionLocal.add(vec3(totalLocalX, 0, 0));
 
   const gradT = pow(heightAlongBlade, 1.4);
   const gradientA = mix(

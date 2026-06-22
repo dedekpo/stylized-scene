@@ -17,12 +17,10 @@ type Props = {
   colorPatchScale: number;
   macroVariation: number;
   macroScale: number;
-  bladeHeightVariation: number;
   windStrength: number;
   windSpeed: number;
   projection: number;
   debugMode: DebugMode;
-  sizeNoiseScale: number;
   pathDepth: number;
   dirtBump: number;
 };
@@ -86,12 +84,10 @@ export function Scene(props: Props) {
         colorPatchScale={props.colorPatchScale}
         macroVariation={props.macroVariation}
         macroScale={props.macroScale}
-        bladeHeightVariation={props.bladeHeightVariation}
         windStrength={props.windStrength}
         windSpeed={props.windSpeed}
         projection={props.projection}
         debugMode={props.debugMode}
-        sizeNoiseScale={props.sizeNoiseScale}
         groundColorMap={grassColor}
         noiseMap={noiseMap}
         pathMask={pathMask}

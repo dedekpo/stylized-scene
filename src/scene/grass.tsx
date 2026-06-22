@@ -25,12 +25,10 @@ type Props = {
   colorPatchScale: number;
   macroVariation: number;
   macroScale: number;
-  bladeHeightVariation: number;
   windStrength: number;
   windSpeed: number;
   projection: number;
   debugMode: DebugMode;
-  sizeNoiseScale: number;
   groundColorMap: Texture;
   noiseMap: Texture;
   pathMask: Texture;
@@ -48,12 +46,10 @@ export function Grass({
   colorPatchScale,
   macroVariation,
   macroScale,
-  bladeHeightVariation,
   windStrength,
   windSpeed,
   projection,
   debugMode,
-  sizeNoiseScale,
   groundColorMap,
   noiseMap,
   pathMask,
@@ -66,7 +62,6 @@ export function Grass({
   );
 
   const pathMaskData = useTextureImageData(pathMask);
-  const noiseMapData = useTextureImageData(noiseMap);
 
   const rootU = useUniformColor(rootColor);
   const tipU = useUniformColor(tipColor);
@@ -76,7 +71,6 @@ export function Grass({
   const colorPatchScaleU = useUniform(colorPatchScale);
   const macroVariationU = useUniform(macroVariation);
   const macroScaleU = useUniform(macroScale);
-  const bladeHeightVariationU = useUniform(bladeHeightVariation);
   const windStrengthU = useUniform(windStrength);
   const windSpeedU = useUniform(windSpeed);
   const projectionU = useUniform(projection);
@@ -101,7 +95,6 @@ export function Grass({
           colorPatchScale: colorPatchScaleU,
           macroVariation: macroVariationU,
           macroScale: macroScaleU,
-          bladeHeightVariation: bladeHeightVariationU,
           windStrength: windStrengthU,
           windSpeed: windSpeedU,
           projection: projectionU,
@@ -122,7 +115,6 @@ export function Grass({
       colorPatchScaleU,
       macroVariationU,
       macroScaleU,
-      bladeHeightVariationU,
       windStrengthU,
       windSpeedU,
       projectionU,
@@ -160,25 +152,15 @@ export function Grass({
       const edgeJitter = (Math.sin(i * 12.9898) * 43758.5453) % 1;
       const onPath = maskValue + (edgeJitter - 0.5) * 0.3 > 0.5;
 
-      const noiseValue = noiseMapData
-        ? sampleImageData(
-            noiseMapData,
-            x * sizeNoiseScale + 50,
-            z * sizeNoiseScale + 50,
-            "repeat"
-          )
-        : 0.5;
-      const sizeMultiplier = 0.9 + noiseValue * 0.3;
-
       dummy.position.set(x, 0, z);
       dummy.rotation.set(0, seeds[i * 3 + 2], 0);
-      dummy.scale.setScalar(onPath ? 0 : scale * sizeMultiplier);
+      dummy.scale.setScalar(onPath ? 0 : scale);
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
     }
     mesh.count = density;
     mesh.instanceMatrix.needsUpdate = true;
-  }, [density, scale, seeds, sizeNoiseScale, pathMaskData, noiseMapData]);
+  }, [density, scale, seeds, pathMaskData]);
 
   if (!geometry) return null;
 

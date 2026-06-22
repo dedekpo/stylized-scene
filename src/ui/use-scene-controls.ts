@@ -19,9 +19,6 @@ export function useSceneControls() {
     DEFAULT_CONTROLS.macroVariation
   );
   const [macroScale, setMacroScale] = useState(DEFAULT_CONTROLS.macroScale);
-  const [bladeHeightVariation, setBladeHeightVariation] = useState(
-    DEFAULT_CONTROLS.bladeHeightVariation
-  );
   const [windStrength, setWindStrength] = useState(
     DEFAULT_CONTROLS.windStrength
   );
@@ -29,9 +26,6 @@ export function useSceneControls() {
   const [projection, setProjection] = useState(DEFAULT_CONTROLS.projection);
   const [debugMode, setDebugMode] = useState<DebugMode>(
     DEFAULT_CONTROLS.debugMode
-  );
-  const [sizeNoiseScale, setSizeNoiseScale] = useState(
-    DEFAULT_CONTROLS.sizeNoiseScale
   );
   const [pathDepth, setPathDepth] = useState(DEFAULT_CONTROLS.pathDepth);
   const [dirtBump, setDirtBump] = useState(DEFAULT_CONTROLS.dirtBump);
@@ -48,12 +42,10 @@ export function useSceneControls() {
       colorPatchScale,
       macroVariation,
       macroScale,
-      bladeHeightVariation,
       windStrength,
       windSpeed,
       projection,
       debugMode,
-      sizeNoiseScale,
       pathDepth,
       dirtBump,
     },
@@ -68,12 +60,10 @@ export function useSceneControls() {
       colorPatchScale: setColorPatchScale,
       macroVariation: setMacroVariation,
       macroScale: setMacroScale,
-      bladeHeightVariation: setBladeHeightVariation,
       windStrength: setWindStrength,
       windSpeed: setWindSpeed,
       projection: setProjection,
       debugMode: setDebugMode,
-      sizeNoiseScale: setSizeNoiseScale,
       pathDepth: setPathDepth,
       dirtBump: setDirtBump,
     },

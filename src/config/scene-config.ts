@@ -30,19 +30,19 @@ export const LIGHTING = {
 } as const;
 
 export const TEXTURE_PATHS = {
-  grassColor: "/grass_texture/grass_05_basecolor_4k.png",
-  grassNormal: "/grass_texture/grass_05_normal_gl_4k.png",
-  grassRoughness: "/grass_texture/grass_05_roughness_4k.png",
-  noise: "/perlin.png",
-  dirtColor: "/ground_texture/ground_07_4k/ground_07__basecolor_4k.png",
-  dirtNormal: "/ground_texture/ground_07_4k/ground_07__normal_gl_4k.png",
-  dirtRoughness: "/ground_texture/ground_07_4k/ground_07__roughness_4k.png",
-  dirtAO: "/ground_texture/ground_07_4k/ground_07__ambientocclusion_4k.png",
-  dirtHeight: "/ground_texture/ground_07_4k/ground_07__height_4k.png",
-  dirtMetallic: "/ground_texture/ground_07_4k/ground_07__metallic_4k.png",
-  pathMask: "/path.png",
+  grassColor: "/grass_texture/grass_05_basecolor_1k.webp",
+  grassNormal: "/grass_texture/grass_05_normal_gl_1k.webp",
+  grassRoughness: "/grass_texture/grass_05_roughness_1k.webp",
+  noise: "/perlin.webp",
+  dirtColor: "/ground_texture/ground_07_4k/ground_07__basecolor_1k.webp",
+  dirtNormal: "/ground_texture/ground_07_4k/ground_07__normal_gl_1k.webp",
+  dirtRoughness: "/ground_texture/ground_07_4k/ground_07__roughness_1k.webp",
+  dirtAO: "/ground_texture/ground_07_4k/ground_07__ambientocclusion_1k.webp",
+  dirtHeight: "/ground_texture/ground_07_4k/ground_07__height_1k.webp",
+  dirtMetallic: "/ground_texture/ground_07_4k/ground_07__metallic_1k.webp",
+  pathMask: "/path.webp",
   grassBlades: "/grass-blades-up.glb",
-  sky: "/skybox/sky_88_2k.png",
+  sky: "/skybox/sky_88_1k.webp",
 } as const;
 
 export const DEFAULT_CONTROLS = {
@@ -56,12 +56,10 @@ export const DEFAULT_CONTROLS = {
   colorPatchScale: 0.35,
   macroVariation: 0.15,
   macroScale: 0.05,
-  bladeHeightVariation: 0.35,
   windStrength: 0.15,
   windSpeed: 1.5,
   projection: 0.7,
   debugMode: "full" as DebugMode,
-  sizeNoiseScale: 0.1,
   pathDepth: 0.25,
   dirtBump: 0.15,
 };
