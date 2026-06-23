@@ -14,7 +14,6 @@ import {
 import type { Texture } from "three";
 import type { Node as TSLNode } from "three/webgpu";
 import type { FloatUniform } from "../utils/use-uniform";
-import type { CursorUniforms } from "../types";
 
 // A scalar (float) TSL node. Used for the optional per-element phase input so
 // callers can desync neighbouring instances, and to keep the accumulated
@@ -45,15 +44,13 @@ export type WindSwayOptions = {
   // Lets large elements (a tree canopy) move at a visible absolute scale while
   // sharing the same wind uniforms as small ones (grass). Default 1.
   amplitude?: number;
-  // Optional pointer interaction that pushes elements away from the cursor.
-  cursor?: CursorUniforms;
 };
 
 // Computes the wind-driven local-space displacement shared by the grass blades
 // and the tree leaves. Returns a vec3 offset to add to positionLocal. The
 // motion is a world-space sway (so neighbours move coherently) whose amplitude
 // is modulated by drifting noise, ramped by height above the anchor, with an
-// optional high-frequency tip flutter and cursor push.
+// optional high-frequency tip flutter.
 export function windSwayOffset({
   baseY,
   height,
@@ -64,7 +61,6 @@ export function windSwayOffset({
   bendExponent = 2.0,
   flutterAmp = 0.05,
   amplitude = 1.0,
-  cursor,
 }: WindSwayOptions) {
   const heightFactor = clamp(positionLocal.y.sub(baseY).div(height), 0, 1);
   const bendStrength = pow(heightFactor, bendExponent);
@@ -105,19 +101,8 @@ export function windSwayOffset({
       ? sin(flutterPhase).mul(flutterAmp).mul(flutterMask)
       : float(0);
 
-  // Pointer push: elements lean away from the cursor, ramped by the same bend.
-  let cursorPush: ShaderNode = float(0);
-  if (cursor) {
-    const cursorDist = worldXZ.sub(cursor.pos).length();
-    const cursorFalloff = float(1)
-      .sub(smoothstep(0, 1.8, cursorDist))
-      .mul(cursor.active);
-    cursorPush = cursorFalloff.mul(0.9).mul(bendStrength);
-  }
-
   const totalLocalX: ShaderNode = swayOffset
     .add(flutterOffset)
-    .add(cursorPush)
     .mul(float(amplitude));
 
   return vec3(totalLocalX, 0, 0);

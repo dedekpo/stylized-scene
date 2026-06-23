@@ -1,7 +1,6 @@
-import { useMemo } from "react";
 import { useTexture } from "@react-three/drei";
 import { TEXTURE_PATHS } from "../config/scene-config";
-import { makeCursorUniforms, type DebugMode } from "../types";
+import type { DebugMode } from "../types";
 import { TreeLeaves } from "./tree-leaves";
 import { Ground } from "./ground";
 import { Grass } from "./grass";
@@ -54,15 +53,12 @@ export function Scene(props: Props) {
     TEXTURE_PATHS.pathMask,
   ]);
 
-  const cursor = useMemo(() => makeCursorUniforms(), []);
-
   return (
     <>
       <TreeLeaves
         windStrength={props.windStrength}
         windSpeed={props.windSpeed}
         noiseMap={noiseMap}
-        cursor={cursor}
       />
       <Ground
         grassColor={grassColor}
@@ -78,7 +74,6 @@ export function Scene(props: Props) {
         noiseMap={noiseMap}
         pathDepth={props.pathDepth}
         dirtBump={props.dirtBump}
-        cursor={cursor}
       />
       <Grass
         density={props.density}
@@ -100,7 +95,6 @@ export function Scene(props: Props) {
         groundColorMap={grassColor}
         noiseMap={noiseMap}
         pathMask={pathMask}
-        cursor={cursor}
       />
     </>
   );

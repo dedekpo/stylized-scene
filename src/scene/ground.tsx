@@ -4,7 +4,6 @@ import { SCENE } from "../config/scene-config";
 import { buildGroundMaterial } from "../materials/ground-material";
 import { useUniform } from "../utils/use-uniform";
 import { configureGroundTextures } from "../utils/texture-setup";
-import type { CursorUniforms } from "../types";
 
 type Props = {
   grassColor: Texture;
@@ -20,7 +19,6 @@ type Props = {
   noiseMap: Texture;
   pathDepth: number;
   dirtBump: number;
-  cursor: CursorUniforms;
 };
 
 export function Ground({
@@ -37,7 +35,6 @@ export function Ground({
   noiseMap,
   pathDepth,
   dirtBump,
-  cursor,
 }: Props) {
   const pathDepthU = useUniform(pathDepth);
   const dirtBumpU = useUniform(dirtBump);
@@ -104,18 +101,7 @@ export function Ground({
   );
 
   return (
-    <mesh
-      rotation={[-Math.PI / 2, 0, 0]}
-      receiveShadow
-      material={material}
-      onPointerMove={(e) => {
-        cursor.pos.value.set(e.point.x, e.point.z);
-        cursor.active.value = 1;
-      }}
-      onPointerOut={() => {
-        cursor.active.value = 0;
-      }}
-    >
+    <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow material={material}>
       <planeGeometry args={[SCENE.GROUND_SIZE, SCENE.GROUND_SIZE, 256, 256]} />
     </mesh>
   );

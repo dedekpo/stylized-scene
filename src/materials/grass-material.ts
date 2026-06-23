@@ -22,7 +22,7 @@ import {
 } from "three/tsl";
 import { DoubleSide, type Texture } from "three";
 import { LIGHTING, SCENE } from "../config/scene-config";
-import type { CursorUniforms, DebugMode } from "../types";
+import type { DebugMode } from "../types";
 import type { ColorUniform, FloatUniform } from "../utils/use-uniform";
 import { windSwayOffset } from "./wind";
 
@@ -48,7 +48,6 @@ export type GrassMaterialParams = {
     projection: FloatUniform;
     translucencyEnabled: FloatUniform;
     fresnelEnabled: FloatUniform;
-    cursor: CursorUniforms;
   };
 };
 
@@ -74,7 +73,6 @@ export function buildGrassMaterial({
     windSpeed: uniforms.windSpeed,
     noiseMap: textures.noiseMap,
     phase: bladePhase,
-    cursor: uniforms.cursor,
   });
 
   const groundUVFromWorld = vec2(

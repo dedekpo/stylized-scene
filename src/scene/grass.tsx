@@ -12,7 +12,7 @@ import { useUniform, useUniformColor } from "../utils/use-uniform";
 import { useTextureImageData, sampleImageData } from "../utils/image-data";
 import { extractGrassGeometry } from "../utils/grass-geometry";
 import { generateInstanceSeeds } from "../utils/instance-seeds";
-import type { CursorUniforms, DebugMode } from "../types";
+import type { DebugMode } from "../types";
 
 type Props = {
   density: number;
@@ -34,7 +34,6 @@ type Props = {
   groundColorMap: Texture;
   noiseMap: Texture;
   pathMask: Texture;
-  cursor: CursorUniforms;
 };
 
 export function Grass({
@@ -57,7 +56,6 @@ export function Grass({
   groundColorMap,
   noiseMap,
   pathMask,
-  cursor,
 }: Props) {
   const { scene } = useGLTF(TEXTURE_PATHS.grassBlades);
   const { geometry, bladeHeight } = useMemo(
@@ -106,7 +104,6 @@ export function Grass({
           projection: projectionU,
           translucencyEnabled: translucencyU,
           fresnelEnabled: fresnelU,
-          cursor,
         },
       }),
     [
@@ -128,7 +125,6 @@ export function Grass({
       projectionU,
       translucencyU,
       fresnelU,
-      cursor,
     ]
   );
 

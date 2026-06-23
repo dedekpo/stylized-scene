@@ -12,13 +12,11 @@ import {
 import { TEXTURE_PATHS } from "../config/scene-config";
 import { windSwayOffset } from "../materials/wind";
 import { useUniform } from "../utils/use-uniform";
-import type { CursorUniforms } from "../types";
 
 type Props = {
   windStrength: number;
   windSpeed: number;
   noiseMap: Texture;
-  cursor: CursorUniforms;
 };
 
 // The leaves GLB is a set of intersecting cards (a single "Plane" mesh) with no
@@ -28,7 +26,7 @@ type Props = {
 // shadows without depth-sort artifacts between the overlapping cards. The same
 // wind displacement that drives the grass is applied here so the canopy sways
 // in sync with the field, anchored at the bottom where the trunk will attach.
-export function TreeLeaves({ windStrength, windSpeed, noiseMap, cursor }: Props) {
+export function TreeLeaves({ windStrength, windSpeed, noiseMap }: Props) {
   const { scene } = useGLTF(TEXTURE_PATHS.treeLeaves);
   const alphaMap = useTexture(TEXTURE_PATHS.treeLeavesAlpha);
 
@@ -75,11 +73,10 @@ export function TreeLeaves({ windStrength, windSpeed, noiseMap, cursor }: Props)
         bendExponent: 1.5,
         flutterAmp: 0.15,
         amplitude: 4.0,
-        cursor,
       })
     );
     return m;
-  }, [alphaMap, baseY, height, windStrengthU, windSpeedU, noiseMap, cursor]);
+  }, [alphaMap, baseY, height, windStrengthU, windSpeedU, noiseMap]);
 
   if (!geometry) return null;
 
