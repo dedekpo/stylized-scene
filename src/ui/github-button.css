@@ -1,0 +1,37 @@
+/* GitHub-branded source link. Colors follow GitHub's palette: the dark surface
+   #24292f with a #1f2328 hover, white Octocat + label. */
+.github-button {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #24292f;
+  color: #ffffff;
+  font: 600 13px/1 system-ui, sans-serif;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.github-button:hover {
+  background: #1f2328;
+  transform: translateY(-1px);
+}
+
+.github-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.github-button__mark {
+  display: block;
+}
+
+.github-button__label {
+  letter-spacing: 0.01em;
+}

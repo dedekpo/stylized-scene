@@ -19,6 +19,7 @@ import { LIGHTING, TEXTURE_PATHS } from "./config/scene-config";
 import type { ToneMappingMode } from "./types";
 import { Scene } from "./scene/scene";
 import { ControlsPanel } from "./ui/controls-panel";
+import { GithubButton } from "./ui/github-button";
 import { useSceneControls } from "./ui/use-scene-controls";
 
 const TONE_MAPPING_VALUES: Record<ToneMappingMode, ToneMapping> = {
@@ -73,7 +74,7 @@ export default function App() {
       <Canvas
         flat
         shadows
-        camera={{ position: [3, 3, 4] }}
+        camera={{ position: [1.98, 4.46, 22.31] }}
         gl={createWebGPURenderer}
       >
         <directionalLight
@@ -106,6 +107,7 @@ export default function App() {
         <CameraControls />
       </Canvas>
       <ControlsPanel values={values} set={set} />
+      <GithubButton />
     </>
   );
 }
