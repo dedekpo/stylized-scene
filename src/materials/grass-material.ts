@@ -1,4 +1,4 @@
-import { MeshStandardNodeMaterial } from "three/webgpu";
+import { MeshStandardNodeMaterial, type Node as TSLNode } from "three/webgpu";
 import {
   attribute,
   cameraPosition,
@@ -33,6 +33,8 @@ export type GrassMaterialParams = {
     pathMask: Texture;
   };
   uniforms: {
+    heightVariation: FloatUniform;
+    heightNoiseScale: FloatUniform;
     rootColor: ColorUniform;
     tipColor: ColorUniform;
     rootColorB: ColorUniform;
@@ -65,13 +67,20 @@ export function buildGrassMaterial({
 
   const worldXZ = vec2(positionWorld.x, positionWorld.z);
 
+  // Per-instance world XZ of the blade model, baked as an instanced attribute in
+  // grass.tsx. In the position/vertex stage positionWorld does NOT carry the
+  // per-instance offset for an InstancedMesh (it collapses to one shared value),
+  // so anything spatial computed here — the wind gust AND the height noise below
+  // — must sample this attribute instead, or the whole field reads identically.
+  const instanceOrigin: TSLNode<"vec2"> = attribute("aOrigin", "vec2");
+
   const swayOffset = windSwayOffset({
     baseY: 0,
     height: bladeHeight,
     // Per-instance world XZ and yaw basis, set on the geometry in grass.tsx. The
     // origin makes the gust wave sample at each blade's own location; the facing
     // keeps the bend direction coherent in world space across rotated blades.
-    origin: attribute("aOrigin", "vec2"),
+    origin: instanceOrigin,
     facing: attribute("aFacing", "vec2"),
     windStrength: uniforms.windStrength,
     windSpeed: uniforms.windSpeed,
@@ -88,7 +97,30 @@ export function buildGrassMaterial({
   );
   const pathSample = tslTexture(textures.pathMask, groundUVFromWorld).r;
 
-  m.positionNode = positionLocal.add(swayOffset);
+  // Per-clump height variation. The same MaterialX gradient noise that drives the
+  // color patches, sampled here by the blade model's world XZ, so neighbouring
+  // models share a height while the field swells and dips in organic waves
+  // instead of being one flat carpet. The fixed UV offset decorrelates the height
+  // pattern from the color/macro noise so tall patches don't line up with tints.
+  // heightNoiseScale sets the clump frequency (higher = smaller patches);
+  // heightVariation sets the swing around the base height. The noise is signed
+  // (~-1..1), so the factor stays centred on 1.0 and the average blade keeps its
+  // authored height; clamped so a model is never inverted or fully flattened.
+  const heightNoise = mx_noise_float(
+    instanceOrigin.add(vec2(53.0, 17.0)).mul(uniforms.heightNoiseScale)
+  );
+  const heightFactor = clamp(
+    float(1).add(heightNoise.mul(uniforms.heightVariation)),
+    0.2,
+    1.8
+  );
+
+  // Scale the whole bent blade model vertically. Applying the factor after the
+  // wind sway (rather than scaling positionLocal first) keeps the root planted at
+  // y=0 and stretches the full curved silhouette, so taller models also sway
+  // taller. Only Y is scaled — the six blades keep their width and footprint.
+  const swayed = positionLocal.add(swayOffset);
+  m.positionNode = vec3(swayed.x, swayed.y.mul(heightFactor), swayed.z);
 
   const gradT = pow(heightAlongBlade, 1.4);
   const gradientA = mix(
@@ -151,6 +183,10 @@ export function buildGrassMaterial({
       ? groundTint
       : debugMode === "height"
       ? vec3(heightAlongBlade, heightAlongBlade, heightAlongBlade)
+      : debugMode === "heightscale"
+      ? // Per-model height factor mapped to gray: 1.0 (authored height) reads as
+        // mid-gray, taller patches brighter, shorter darker.
+        vec3(heightFactor.mul(0.5))
       : debugMode === "world"
       ? vec3(
           positionWorld.x.div(SCENE.GROUND_SIZE).add(0.5),

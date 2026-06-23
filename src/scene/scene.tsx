@@ -22,6 +22,8 @@ const TREE_LAYOUT: ReadonlyArray<{
 type Props = {
   density: number;
   scale: number;
+  heightVariation: number;
+  heightNoiseScale: number;
   rootColor: string;
   tipColor: string;
   rootColorB: string;
@@ -108,6 +110,8 @@ export function Scene(props: Props) {
       <Grass
         density={props.density}
         scale={props.scale}
+        heightVariation={props.heightVariation}
+        heightNoiseScale={props.heightNoiseScale}
         rootColor={props.rootColor}
         tipColor={props.tipColor}
         rootColorB={props.rootColorB}

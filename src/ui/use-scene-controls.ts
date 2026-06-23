@@ -5,6 +5,12 @@ import type { DebugMode } from "../types";
 export function useSceneControls() {
   const [density, setDensity] = useState(DEFAULT_CONTROLS.density);
   const [scale, setScale] = useState(DEFAULT_CONTROLS.scale);
+  const [heightVariation, setHeightVariation] = useState(
+    DEFAULT_CONTROLS.heightVariation
+  );
+  const [heightNoiseScale, setHeightNoiseScale] = useState(
+    DEFAULT_CONTROLS.heightNoiseScale
+  );
   const [rootColor, setRootColor] = useState(DEFAULT_CONTROLS.rootColor);
   const [tipColor, setTipColor] = useState(DEFAULT_CONTROLS.tipColor);
   const [rootColorB, setRootColorB] = useState(DEFAULT_CONTROLS.rootColorB);
@@ -44,6 +50,8 @@ export function useSceneControls() {
     values: {
       density,
       scale,
+      heightVariation,
+      heightNoiseScale,
       rootColor,
       tipColor,
       rootColorB,
@@ -70,6 +78,8 @@ export function useSceneControls() {
     set: {
       density: setDensity,
       scale: setScale,
+      heightVariation: setHeightVariation,
+      heightNoiseScale: setHeightNoiseScale,
       rootColor: setRootColor,
       tipColor: setTipColor,
       rootColorB: setRootColorB,

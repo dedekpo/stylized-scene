@@ -10,6 +10,7 @@ const DEBUG_OPTIONS: ReadonlyArray<{ value: DebugMode; label: string }> = [
   { value: "gradient", label: "Gradient only (no projection/jitter)" },
   { value: "ground", label: "Ground tint sample" },
   { value: "height", label: "heightAlongBlade (grayscale)" },
+  { value: "heightscale", label: "Height scale factor (grayscale)" },
   { value: "world", label: "World XZ (RGB)" },
   { value: "pathmask", label: "Path mask sample (grayscale)" },
 ];
@@ -60,6 +61,24 @@ export function ControlsPanel({ values, set }: Props) {
             step={0.05}
             format={fmt2}
             onChange={set.scale}
+          />
+          <SliderRow
+            label="Height variation"
+            value={values.heightVariation}
+            min={0}
+            max={1}
+            step={0.01}
+            format={fmt2}
+            onChange={set.heightVariation}
+          />
+          <SliderRow
+            label="Height noise scale"
+            value={values.heightNoiseScale}
+            min={0.05}
+            max={2}
+            step={0.01}
+            format={fmt2}
+            onChange={set.heightNoiseScale}
           />
           <SliderRow
             label="Wind strength"

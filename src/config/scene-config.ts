@@ -67,6 +67,8 @@ export const TEXTURE_PATHS = {
 export const DEFAULT_CONTROLS = {
   density: 5000,
   scale: 1.3,
+  heightVariation: 0.5,
+  heightNoiseScale: 0.15,
   rootColor: "#6aa14f",
   tipColor: "#a1cc33",
   rootColorB: "#74a022",

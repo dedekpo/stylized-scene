@@ -3,6 +3,7 @@ export type DebugMode =
   | "gradient"
   | "ground"
   | "height"
+  | "heightscale"
   | "world"
   | "pathmask";
 

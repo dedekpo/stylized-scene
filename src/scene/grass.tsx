@@ -18,6 +18,8 @@ import type { DebugMode } from "../types";
 type Props = {
   density: number;
   scale: number;
+  heightVariation: number;
+  heightNoiseScale: number;
   rootColor: string;
   tipColor: string;
   rootColorB: string;
@@ -44,6 +46,8 @@ type Props = {
 export function Grass({
   density,
   scale,
+  heightVariation,
+  heightNoiseScale,
   rootColor,
   tipColor,
   rootColorB,
@@ -74,6 +78,8 @@ export function Grass({
 
   const pathMaskData = useTextureImageData(pathMask);
 
+  const heightVariationU = useUniform(heightVariation);
+  const heightNoiseScaleU = useUniform(heightNoiseScale);
   const rootU = useUniformColor(rootColor);
   const tipU = useUniformColor(tipColor);
   const rootBU = useUniformColor(rootColorB);
@@ -104,6 +110,8 @@ export function Grass({
         debugMode,
         textures: { groundColorMap, noiseMap, pathMask },
         uniforms: {
+          heightVariation: heightVariationU,
+          heightNoiseScale: heightNoiseScaleU,
           rootColor: rootU,
           tipColor: tipU,
           rootColorB: rootBU,
@@ -129,6 +137,8 @@ export function Grass({
       groundColorMap,
       noiseMap,
       pathMask,
+      heightVariationU,
+      heightNoiseScaleU,
       rootU,
       tipU,
       rootBU,
