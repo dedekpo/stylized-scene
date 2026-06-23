@@ -15,10 +15,7 @@ import {
   positionLocal,
   positionWorld,
   pow,
-  sin,
-  smoothstep,
   texture as tslTexture,
-  time,
   vec2,
   vec3,
   vec4,
@@ -27,6 +24,7 @@ import { DoubleSide, type Texture } from "three";
 import { LIGHTING, SCENE } from "../config/scene-config";
 import type { CursorUniforms, DebugMode } from "../types";
 import type { ColorUniform, FloatUniform } from "../utils/use-uniform";
+import { windSwayOffset } from "./wind";
 
 export type GrassMaterialParams = {
   bladeHeight: number;
@@ -63,51 +61,21 @@ export function buildGrassMaterial({
   const m = new MeshStandardNodeMaterial({ side: DoubleSide });
 
   const heightAlongBlade = clamp(positionLocal.y.div(bladeHeight), 0, 1);
-  const bendStrength = pow(heightAlongBlade, 2.0);
 
   const bladeSeed = hash(float(instanceIndex));
   const bladePhase = bladeSeed.mul(6.28318);
 
   const worldXZ = vec2(positionWorld.x, positionWorld.z);
 
-  const spatialFreq = float(0.3);
-  const swayPhase = worldXZ.x
-    .mul(spatialFreq)
-    .add(worldXZ.y.mul(spatialFreq))
-    .add(time.mul(uniforms.windSpeed))
-    .add(bladePhase);
-  const sway = sin(swayPhase);
-
-  // Slowly drifting spatial noise so the sway amplitude varies across the
-  // field instead of every blade moving with identical strength.
-  const windPatchScale = float(0.06);
-  const windPatchUV = vec2(
-    worldXZ.x.mul(windPatchScale).add(time.mul(0.15)),
-    worldXZ.y.mul(windPatchScale).add(time.mul(0.08))
-  );
-  const windPatch = tslTexture(textures.noiseMap, windPatchUV).r;
-
-  const flutterPhase = time
-    .mul(8.0)
-    .add(bladePhase.mul(2))
-    .add(worldXZ.x.mul(0.5))
-    .add(worldXZ.y.mul(0.5));
-  const flutter = sin(flutterPhase);
-  const flutterMask = smoothstep(0.7, 1.0, heightAlongBlade);
-
-  const swayAmp = uniforms.windStrength.mul(float(0.5).add(windPatch.mul(0.8)));
-
-  const swayOffset = sway.mul(swayAmp).mul(bendStrength);
-  const flutterOffset = flutter.mul(0.05).mul(flutterMask);
-
-  const cursorDelta = worldXZ.sub(uniforms.cursor.pos);
-  const cursorDist = cursorDelta.length();
-  const cursorFalloff = float(1)
-    .sub(smoothstep(0, 1.8, cursorDist))
-    .mul(uniforms.cursor.active);
-  const cursorPush = cursorFalloff.mul(0.9).mul(bendStrength);
-
-  const totalLocalX = swayOffset.add(flutterOffset).add(cursorPush);
+  const swayOffset = windSwayOffset({
+    baseY: 0,
+    height: bladeHeight,
+    windStrength: uniforms.windStrength,
+    windSpeed: uniforms.windSpeed,
+    noiseMap: textures.noiseMap,
+    phase: bladePhase,
+    cursor: uniforms.cursor,
+  });
 
   const groundUVFromWorld = vec2(
     positionWorld.x.div(SCENE.GROUND_SIZE).add(0.5),
@@ -115,7 +83,7 @@ export function buildGrassMaterial({
   );
   const pathSample = tslTexture(textures.pathMask, groundUVFromWorld).r;
 
-  m.positionNode = positionLocal.add(vec3(totalLocalX, 0, 0));
+  m.positionNode = positionLocal.add(swayOffset);
 
   const gradT = pow(heightAlongBlade, 1.4);
   const gradientA = mix(

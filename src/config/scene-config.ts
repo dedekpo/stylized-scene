@@ -58,6 +58,8 @@ export const TEXTURE_PATHS = {
   dirtMetallic: "/ground_texture/ground_07_4k/ground_07__metallic_1k.webp",
   pathMask: "/path.webp",
   grassBlades: "/grass-blades-up.glb",
+  treeLeaves: "/tree-leaves-mesh.glb",
+  treeLeavesAlpha: "/leaves-alpha-map.png",
   sky: "/skybox/sky_88_1k.webp",
 } as const;
 

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useTexture } from "@react-three/drei";
 import { TEXTURE_PATHS } from "../config/scene-config";
 import { makeCursorUniforms, type DebugMode } from "../types";
-import { Cube } from "./cube";
+import { TreeLeaves } from "./tree-leaves";
 import { Ground } from "./ground";
 import { Grass } from "./grass";
 
@@ -58,7 +58,12 @@ export function Scene(props: Props) {
 
   return (
     <>
-      <Cube />
+      <TreeLeaves
+        windStrength={props.windStrength}
+        windSpeed={props.windSpeed}
+        noiseMap={noiseMap}
+        cursor={cursor}
+      />
       <Ground
         grassColor={grassColor}
         grassNormal={grassNormal}
