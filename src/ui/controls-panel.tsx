@@ -80,6 +80,50 @@ export function ControlsPanel({ values, set }: Props) {
             onChange={set.windSpeed}
           />
           <SliderRow
+            label="Wind direction"
+            value={values.windAngle}
+            min={0}
+            max={360}
+            step={1}
+            onChange={set.windAngle}
+          />
+          <SliderRow
+            label="Gust frequency"
+            value={values.gustScale}
+            min={0.1}
+            max={1.5}
+            step={0.01}
+            format={fmt2}
+            onChange={set.gustScale}
+          />
+          <SliderRow
+            label="Turbulence"
+            value={values.turbulence}
+            min={0}
+            max={1}
+            step={0.01}
+            format={fmt2}
+            onChange={set.turbulence}
+          />
+          <SliderRow
+            label="Tip flutter"
+            value={values.flutter}
+            min={0}
+            max={1}
+            step={0.01}
+            format={fmt2}
+            onChange={set.flutter}
+          />
+          <SliderRow
+            label="Tree sway"
+            value={values.treeSway}
+            min={0}
+            max={3}
+            step={0.05}
+            format={fmt2}
+            onChange={set.treeSway}
+          />
+          <SliderRow
             label="Ground projection"
             value={values.projection}
             min={0}

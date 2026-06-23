@@ -60,7 +60,8 @@ export const TEXTURE_PATHS = {
   grassBlades: "/grass-blades-up.glb",
   treeLeaves: "/tree-leaves-mesh.glb",
   treeLeavesAlpha: "/leaves-alpha-map.png",
-  sky: "/skybox/sky_88_1k.webp",
+  treeTrunk: "/tree-tronk-transformed.glb",
+  sky: "/skybox/sky_88_2k.png",
 } as const;
 
 export const DEFAULT_CONTROLS = {
@@ -74,8 +75,13 @@ export const DEFAULT_CONTROLS = {
   colorPatchScale: 0.35,
   macroVariation: 0.15,
   macroScale: 0.05,
-  windStrength: 0.15,
-  windSpeed: 1.5,
+  windStrength: 0.25,
+  windSpeed: 2.0,
+  windAngle: 45,
+  gustScale: 0.5,
+  turbulence: 0.4,
+  flutter: 0.5,
+  treeSway: 1.2,
   projection: 0.7,
   debugMode: "full" as DebugMode,
   pathDepth: 0.25,

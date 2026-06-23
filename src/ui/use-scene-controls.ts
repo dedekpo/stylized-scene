@@ -23,6 +23,11 @@ export function useSceneControls() {
     DEFAULT_CONTROLS.windStrength
   );
   const [windSpeed, setWindSpeed] = useState(DEFAULT_CONTROLS.windSpeed);
+  const [windAngle, setWindAngle] = useState(DEFAULT_CONTROLS.windAngle);
+  const [gustScale, setGustScale] = useState(DEFAULT_CONTROLS.gustScale);
+  const [turbulence, setTurbulence] = useState(DEFAULT_CONTROLS.turbulence);
+  const [flutter, setFlutter] = useState(DEFAULT_CONTROLS.flutter);
+  const [treeSway, setTreeSway] = useState(DEFAULT_CONTROLS.treeSway);
   const [projection, setProjection] = useState(DEFAULT_CONTROLS.projection);
   const [debugMode, setDebugMode] = useState<DebugMode>(
     DEFAULT_CONTROLS.debugMode
@@ -49,6 +54,11 @@ export function useSceneControls() {
       macroScale,
       windStrength,
       windSpeed,
+      windAngle,
+      gustScale,
+      turbulence,
+      flutter,
+      treeSway,
       projection,
       debugMode,
       pathDepth,
@@ -70,6 +80,11 @@ export function useSceneControls() {
       macroScale: setMacroScale,
       windStrength: setWindStrength,
       windSpeed: setWindSpeed,
+      windAngle: setWindAngle,
+      gustScale: setGustScale,
+      turbulence: setTurbulence,
+      flutter: setFlutter,
+      treeSway: setTreeSway,
       projection: setProjection,
       debugMode: setDebugMode,
       pathDepth: setPathDepth,

@@ -1,5 +1,6 @@
 import { MeshStandardNodeMaterial } from "three/webgpu";
 import {
+  attribute,
   cameraPosition,
   clamp,
   color as tslColor,
@@ -42,6 +43,10 @@ export type GrassMaterialParams = {
     macroScale: FloatUniform;
     windStrength: FloatUniform;
     windSpeed: FloatUniform;
+    windAngle: FloatUniform;
+    gustScale: FloatUniform;
+    turbulence: FloatUniform;
+    flutter: FloatUniform;
     projection: FloatUniform;
     translucencyEnabled: FloatUniform;
     fresnelEnabled: FloatUniform;
@@ -58,18 +63,23 @@ export function buildGrassMaterial({
 
   const heightAlongBlade = clamp(positionLocal.y.div(bladeHeight), 0, 1);
 
-  const bladeSeed = hash(float(instanceIndex));
-  const bladePhase = bladeSeed.mul(6.28318);
-
   const worldXZ = vec2(positionWorld.x, positionWorld.z);
 
   const swayOffset = windSwayOffset({
     baseY: 0,
     height: bladeHeight,
+    // Per-instance world XZ and yaw basis, set on the geometry in grass.tsx. The
+    // origin makes the gust wave sample at each blade's own location; the facing
+    // keeps the bend direction coherent in world space across rotated blades.
+    origin: attribute("aOrigin", "vec2"),
+    facing: attribute("aFacing", "vec2"),
     windStrength: uniforms.windStrength,
     windSpeed: uniforms.windSpeed,
+    windAngle: uniforms.windAngle,
+    gustScale: uniforms.gustScale,
+    turbulence: uniforms.turbulence,
+    flutter: uniforms.flutter,
     noiseMap: textures.noiseMap,
-    phase: bladePhase,
   });
 
   const groundUVFromWorld = vec2(

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import {
+  InstancedBufferAttribute,
   Object3D,
   RepeatWrapping,
   type InstancedMesh,
@@ -10,7 +11,7 @@ import { GRASS, SCENE, TEXTURE_PATHS } from "../config/scene-config";
 import { buildGrassMaterial } from "../materials/grass-material";
 import { useUniform, useUniformColor } from "../utils/use-uniform";
 import { useTextureImageData, sampleImageData } from "../utils/image-data";
-import { extractGrassGeometry } from "../utils/grass-geometry";
+import { extractFirstMeshGeometry } from "../utils/mesh-geometry";
 import { generateInstanceSeeds } from "../utils/instance-seeds";
 import type { DebugMode } from "../types";
 
@@ -27,6 +28,10 @@ type Props = {
   macroScale: number;
   windStrength: number;
   windSpeed: number;
+  windAngle: number;
+  gustScale: number;
+  turbulence: number;
+  flutter: number;
   projection: number;
   debugMode: DebugMode;
   translucency: boolean;
@@ -49,6 +54,10 @@ export function Grass({
   macroScale,
   windStrength,
   windSpeed,
+  windAngle,
+  gustScale,
+  turbulence,
+  flutter,
   projection,
   debugMode,
   translucency,
@@ -58,8 +67,8 @@ export function Grass({
   pathMask,
 }: Props) {
   const { scene } = useGLTF(TEXTURE_PATHS.grassBlades);
-  const { geometry, bladeHeight } = useMemo(
-    () => extractGrassGeometry(scene),
+  const { geometry, height: bladeHeight } = useMemo(
+    () => extractFirstMeshGeometry(scene),
     [scene]
   );
 
@@ -75,6 +84,10 @@ export function Grass({
   const macroScaleU = useUniform(macroScale);
   const windStrengthU = useUniform(windStrength);
   const windSpeedU = useUniform(windSpeed);
+  const windAngleU = useUniform(windAngle);
+  const gustScaleU = useUniform(gustScale);
+  const turbulenceU = useUniform(turbulence);
+  const flutterU = useUniform(flutter);
   const projectionU = useUniform(projection);
   const translucencyU = useUniform(translucency ? 1 : 0);
   const fresnelU = useUniform(fresnel ? 1 : 0);
@@ -101,6 +114,10 @@ export function Grass({
           macroScale: macroScaleU,
           windStrength: windStrengthU,
           windSpeed: windSpeedU,
+          windAngle: windAngleU,
+          gustScale: gustScaleU,
+          turbulence: turbulenceU,
+          flutter: flutterU,
           projection: projectionU,
           translucencyEnabled: translucencyU,
           fresnelEnabled: fresnelU,
@@ -122,6 +139,10 @@ export function Grass({
       macroScaleU,
       windStrengthU,
       windSpeedU,
+      windAngleU,
+      gustScaleU,
+      turbulenceU,
+      flutterU,
       projectionU,
       translucencyU,
       fresnelU,
@@ -132,6 +153,29 @@ export function Grass({
     () => generateInstanceSeeds(GRASS.MAX_INSTANCES, SCENE.GROUND_SIZE),
     []
   );
+
+  // Per-instance attributes the wind shader needs, set on the shared geometry
+  // once so they exist when the material's `attribute(...)` nodes compile:
+  //  - aOrigin: the blade's world XZ. The travelling gust wave is sampled here,
+  //    so each blade reads the wind at its own location (sampling positionWorld
+  //    in the vertex stage collapsed to the same value for every instance, which
+  //    is why the whole field moved in lockstep).
+  //  - aFacing: cos/sin of the blade's yaw, used to counter-rotate the world-space
+  //    bend into the blade's local frame so every blade bends the same world way.
+  useMemo(() => {
+    if (!geometry) return;
+    const origin = new Float32Array(GRASS.MAX_INSTANCES * 2);
+    const facing = new Float32Array(GRASS.MAX_INSTANCES * 2);
+    for (let i = 0; i < GRASS.MAX_INSTANCES; i++) {
+      origin[i * 2 + 0] = seeds[i * 3 + 0];
+      origin[i * 2 + 1] = seeds[i * 3 + 1];
+      const yaw = seeds[i * 3 + 2];
+      facing[i * 2 + 0] = Math.cos(yaw);
+      facing[i * 2 + 1] = Math.sin(yaw);
+    }
+    geometry.setAttribute("aOrigin", new InstancedBufferAttribute(origin, 2));
+    geometry.setAttribute("aFacing", new InstancedBufferAttribute(facing, 2));
+  }, [geometry, seeds]);
 
   const ref = useRef<InstancedMesh>(null!);
 

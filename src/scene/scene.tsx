@@ -1,7 +1,7 @@
 import { useTexture } from "@react-three/drei";
 import { TEXTURE_PATHS } from "../config/scene-config";
 import type { DebugMode } from "../types";
-import { TreeLeaves } from "./tree-leaves";
+import { Tree } from "./tree";
 import { Ground } from "./ground";
 import { Grass } from "./grass";
 
@@ -18,6 +18,11 @@ type Props = {
   macroScale: number;
   windStrength: number;
   windSpeed: number;
+  windAngle: number;
+  gustScale: number;
+  turbulence: number;
+  flutter: number;
+  treeSway: number;
   projection: number;
   debugMode: DebugMode;
   pathDepth: number;
@@ -55,9 +60,14 @@ export function Scene(props: Props) {
 
   return (
     <>
-      <TreeLeaves
+      <Tree
         windStrength={props.windStrength}
         windSpeed={props.windSpeed}
+        windAngle={props.windAngle}
+        gustScale={props.gustScale}
+        turbulence={props.turbulence}
+        flutter={props.flutter}
+        treeSway={props.treeSway}
         noiseMap={noiseMap}
       />
       <Ground
@@ -88,6 +98,10 @@ export function Scene(props: Props) {
         macroScale={props.macroScale}
         windStrength={props.windStrength}
         windSpeed={props.windSpeed}
+        windAngle={props.windAngle}
+        gustScale={props.gustScale}
+        turbulence={props.turbulence}
+        flutter={props.flutter}
         projection={props.projection}
         debugMode={props.debugMode}
         translucency={props.translucency}
