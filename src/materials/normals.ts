@@ -1,8 +1,11 @@
 import {
   abs,
+  cameraPosition,
   cameraViewMatrix,
   normalize,
   normalWorld,
+  positionWorld,
+  sign,
   vec3,
   vec4,
 } from "three/tsl";
@@ -23,6 +26,19 @@ export function skyHemisphereNormal() {
   const world = normalize(
     vec3(normalWorld.x, abs(normalWorld.y), normalWorld.z)
   );
+  const view = normalize(cameraViewMatrix.mul(vec4(world, 0)).xyz);
+  return { world, view };
+}
+
+// --- Camera-facing normal (for thin double-sided cards) ---
+// A leaf card is a flat quad: its front and back faces have opposite normals,
+// so under one light one side shades bright and the other dark. As the camera
+// orbits, the dark backs pop out and the cards never read as one soft surface.
+// Flip the world normal to always face the camera, so both sides of a card
+// shade identically regardless of which one is visible.
+export function cameraFacingNormal() {
+  const viewDir = cameraPosition.sub(positionWorld).normalize();
+  const world = normalWorld.mul(sign(normalWorld.dot(viewDir)));
   const view = normalize(cameraViewMatrix.mul(vec4(world, 0)).xyz);
   return { world, view };
 }

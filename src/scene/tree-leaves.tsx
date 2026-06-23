@@ -11,7 +11,7 @@ import {
 } from "three";
 import { TEXTURE_PATHS } from "../config/scene-config";
 import { windSwayOffset } from "../materials/wind";
-import { skyHemisphereNormal } from "../materials/normals";
+import { cameraFacingNormal } from "../materials/normals";
 import { useUniform } from "../utils/use-uniform";
 
 type Props = {
@@ -77,10 +77,9 @@ export function TreeLeaves({ windStrength, windSpeed, noiseMap }: Props) {
       })
     );
 
-    // Double-sided lighting fix (see skyHemisphereNormal): the leaf cards face
-    // every direction, so without this the back-facing ones get their shading
-    // normal flipped into the lower hemisphere and read as unlit.
-    m.normalNode = skyHemisphereNormal().view;
+    // Each leaf card is a flat double-sided quad; orient its shading normal to
+    // face the camera so both faces shade alike instead of one reading dark.
+    m.normalNode = cameraFacingNormal().view;
     return m;
   }, [alphaMap, baseY, height, windStrengthU, windSpeedU, noiseMap]);
 
